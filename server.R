@@ -18,10 +18,8 @@ shinyServer(function(input, output) {
                                        clarity == input$clarity)
                 
                 # plot the diamond data with carat and price
-                p <- ggplot(data = diamonds_sub, aes(x = carat, y = price)) + 
-                        geom_point()
-                p <- p + geom_smooth(method = "lm") + xlab("Carat") 
-                + ylab("Value")
+                p <- ggplot(data = diamonds_sub, aes(x = carat, y = price)) + geom_point()
+                p <- p + geom_smooth(method = "lm") + xlab("Carat") + ylab("Value")
                 p <- p + xlim(0, 6) + ylim (0, 20000)
                 p
         }, height = 700)
@@ -37,10 +35,8 @@ shinyServer(function(input, output) {
         
         observeEvent(input$predict, {distPlot <<- NULL
                 output$distPlot <- renderPlot({
-                        p <- ggplot(data = diamonds, aes(x = carat, y = price)) 
-                        + geom_point()
-                        p <- p + geom_smooth(method = "lm") + xlab("Carat") 
-                        + ylab("Value")
+                        p <- ggplot(data = diamonds, aes(x = carat, y = price)) + geom_point()
+                        p <- p + geom_smooth(method = "lm") + xlab("Carat") + ylab("Value")
                         p <- p + xlim(0, 6) + ylim (0, 20000)
                         p
                 }, height = 700)
