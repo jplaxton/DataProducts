@@ -1,48 +1,48 @@
-library(shiny)
+# Shiny app to determine diamond value based on carat, cut, color, and clarity
 
+library(shiny)
+library(ggplot2)
+library(curl)
+
+# Define server logic
 shinyServer(function(input, output) {
-        mtcars$mpgsp <- ifelse(mtcars$mpg - 20 > 0, mtcars$mpg - 20, 0)
-        model1 <- lm(hp ~ mpg, data = mtcars)
-        model2 <- lm(hp ~ mpgsp + mpg, data = mtcars)
         
-        model1pred <- reactive({
-                mpgInput <- input$sliderMPG
-                predict(model1, newdata = data.frame(mpg = mpgInput))
-        })
+# load data
+        data("diamonds")
         
-        model2pred <- reactive({
-                mpgInput <- input$sliderMPG
-                predict(model2, newdata = 
-                                data.frame(mpg = mpgInput,
-                                           mpgsp = ifelse(mpgInput - 20 > 0,
-                                                          mpgInput - 20, 0)))
-        })
-        output$plot1 <- renderPlot({
-                mpgInput <- input$sliderMPG
+# create the initial output
+        output$distPlot <- renderPlot({
+                # subset the data based on the inputs
+                diamonds_sub <- subset(diamonds, cut == input$cut & 
+                                       color == input$color & 
+                                       clarity == input$clarity)
                 
-                plot(mtcars$mpg, mtcars$hp, xlab = "Miles Per Gallon", 
-                     ylab = "Horsepower", bty = "n", pch = 16,
-                     xlim = c(10, 35), ylim = c(50, 350))
-                if(input$showModel1){
-                        abline(model1, col = "red", lwd = 2)
-                }
-                if(input$showModel2){
-                        model2lines <- predict(model2, newdata = data.frame(
-                                mpg = 10:35, mpgsp = ifelse(10:35 - 20 > 0, 10:35 - 20, 0)
-                        ))
-                        lines(10:35, model2lines, col = "blue", lwd = 2)
-                }
-                legend(25, 250, c("Model 1 Prediction", "Model 2 Prediction"), pch = 16, 
-                       col = c("red", "blue"), bty = "n", cex = 1.2)
-                points(mpgInput, model1pred(), col = "red", pch = 16, cex = 2)
-                points(mpgInput, model2pred(), col = "blue", pch = 16, cex = 2)
+                # plot the diamond data with carat and price
+                p <- ggplot(data = diamonds_sub, aes(x = carat, y = price)) + 
+                        geom_point()
+                p <- p + geom_smooth(method = "lm") + xlab("Carat") 
+                + ylab("Value")
+                p <- p + xlim(0, 6) + ylim (0, 20000)
+                p
+        }, height = 700)
+        
+        # create linear model
+        output$predict <- renderPrint({
+                diamonds_sub <- subset(diamonds, cut == input$cut & 
+                                               color == input$color &
+                                               clarity == input$clarity)
+                fit <- lm(price~carat,data=diamonds_sub)
+                unname(predict(fit, data.frame(carat = input$lm)))
         })
         
-        output$pred1 <- renderText({
-                model1pred()
-        })
-        
-        output$pred2 <- renderText({
-                model2pred()
+        observeEvent(input$predict, {distPlot <<- NULL
+                output$distPlot <- renderPlot({
+                        p <- ggplot(data = diamonds, aes(x = carat, y = price)) 
+                        + geom_point()
+                        p <- p + geom_smooth(method = "lm") + xlab("Carat") 
+                        + ylab("Value")
+                        p <- p + xlim(0, 6) + ylim (0, 20000)
+                        p
+                }, height = 700)
         })
 })

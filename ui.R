@@ -1,19 +1,22 @@
 library(shiny)
+library(ggplot2)
 
-shinyUI(fluidPage(
-        titlePanel("Predict Horsepower from MPG"),
-        sidebarLayout(
-                sidebarPanel(
-                        sliderInput("sliderMPG", "What is the MPG of the car?", 10, 35, value = 20),
-                        checkboxInput("showModel1", "Show/Hide Model 1", value = TRUE),
-                        checkboxInput("showModel2", "Show/Hide Model 2", value = TRUE),                        submitButton("Submit") # New!
-                ),
-                mainPanel(
-                        plotOutput("plot1"),
-                        h3("Predicted Horsepower from Model 1:"),
-                        textOutput("pred1"),
-                        h3("Predicted Horsepower from Model 2:"),
-                        textOutput("pred2")
-                )
-        )
-))
+# load data
+data("diamonds")
+
+# Define UI for the application
+shinyUI(fluidPage(titlePanel("Diamond Value Calculator"),
+                  
+# Sidebar with a slider input for number of variables
+sidebarLayout(sidebarPanel(h4("Input Diamond 4 C's"),
+        selectInput("cut", "Cut", (sort(unique(diamonds$cut), decreasing = T))),
+        selectInput("color", "Color", (sort(unique(diamonds$color)))),
+        selectInput("clarity", "Clarity", (sort(unique(diamonds$clarity), decreasing = T))),
+        sliderInput("lm", "Carat", min = min(diamonds$carat), 
+                    max = max(diamonds$carat), value = max(diamonds$carat) / 2, 
+                    step = 0.1),
+        h4("Predicted Value"), verbatimTextOutput("predict"), width = 4),
+                                
+# Show a plot of the carat/price relationship
+mainPanel("Price/Carat Relationship", plotOutput("distPlot"))
+)))

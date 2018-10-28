@@ -1,23 +1,36 @@
 Developing Data Products - The Pitch
 ========================================================
 author: John Plaxton
-date: Oct. 27,2018
+date: Oct. 28,2018
 autosize: true
+width: 1600
+height: 900
 
-First Slide
+Now What?
 ========================================================
+You've been trolling around in the attic and stumbled across some heirloom jewelry.  You ask yourself "Wonder what the diamonds in the jewelry are worth?".  You have a jeweler assess the weight and grade of the diamonds, and he gives you a value.  How good is that number?  
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+Diamonds are valued based on the 4 C's:
+- Carats: weight of the diamond (proportional to size)
+- Cut: quality of the diamond from best to worst (Ideal, Premium, Very Good, Good, Fair)
+- Color: best(D) to worst(J)
+- Clarity: measures how clear the diamond is from best to worst (IF, VVS2, VVS1, VS2, VS1, SI2, SI1, I1)
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+The app presented here will predict diamond value from user selection of the 4 C's.  The diamond's 4 C's is compared to a database of over 50,000 other diamonds to come up with a value estimate.
 
-Slide With Code
+Documentation
 ========================================================
+Summary of the "diamonds" dataset found in the ggplot2 R package. Over 50,000 diamonds are included in the model for value prediction. A linear regression model is used to predict diamond value.
+```{r echo=FALSE}
+library(ggplot2)
+data(diamonds)
+str(diamonds[,c(1:4,7)])
+```
 
-```{r}
-summary(cars)
+Summary plot of the diamond data with each of the relevant variables plotted against each other
+========================================================
+```{r, echo=FALSE}
+plot(diamonds[,c(1:4,7)])
 ```
 
 Links
